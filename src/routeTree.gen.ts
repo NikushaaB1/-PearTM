@@ -11,10 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RequestRouteImport } from './routes/request'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as ForumRouteImport } from './routes/forum'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ForumPostIdRouteImport } from './routes/forum.$postId'
+import { Route as ApiNotifyRouteImport } from './routes/api/notify'
 
 const RequestRoute = RequestRouteImport.update({
   id: '/request',
@@ -24,6 +28,11 @@ const RequestRoute = RequestRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnersRoute = PartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -41,52 +50,113 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForumPostIdRoute = ForumPostIdRouteImport.update({
+  id: '/$postId',
+  path: '/$postId',
+  getParentRoute: () => ForumRoute,
+} as any)
+const ApiNotifyRoute = ApiNotifyRouteImport.update({
+  id: '/api/notify',
+  path: '/api/notify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/forum': typeof ForumRoute
+  '/forum': typeof ForumRouteWithChildren
   '/map': typeof MapRoute
+  '/partners': typeof PartnersRoute
   '/profile': typeof ProfileRoute
   '/request': typeof RequestRoute
+  '/api/notify': typeof ApiNotifyRoute
+  '/forum/$postId': typeof ForumPostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/forum': typeof ForumRoute
+  '/forum': typeof ForumRouteWithChildren
   '/map': typeof MapRoute
+  '/partners': typeof PartnersRoute
   '/profile': typeof ProfileRoute
   '/request': typeof RequestRoute
+  '/api/notify': typeof ApiNotifyRoute
+  '/forum/$postId': typeof ForumPostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/forum': typeof ForumRoute
+  '/forum': typeof ForumRouteWithChildren
   '/map': typeof MapRoute
+  '/partners': typeof PartnersRoute
   '/profile': typeof ProfileRoute
   '/request': typeof RequestRoute
+  '/api/notify': typeof ApiNotifyRoute
+  '/forum/$postId': typeof ForumPostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/forum' | '/map' | '/profile' | '/request'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/forum'
+    | '/map'
+    | '/partners'
+    | '/profile'
+    | '/request'
+    | '/api/notify'
+    | '/forum/$postId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/forum' | '/map' | '/profile' | '/request'
-  id: '__root__' | '/' | '/admin' | '/forum' | '/map' | '/profile' | '/request'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/forum'
+    | '/map'
+    | '/partners'
+    | '/profile'
+    | '/request'
+    | '/api/notify'
+    | '/forum/$postId'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/forum'
+    | '/map'
+    | '/partners'
+    | '/profile'
+    | '/request'
+    | '/api/notify'
+    | '/forum/$postId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
-  ForumRoute: typeof ForumRoute
+  ForumRoute: typeof ForumRouteWithChildren
   MapRoute: typeof MapRoute
+  PartnersRoute: typeof PartnersRoute
   ProfileRoute: typeof ProfileRoute
   RequestRoute: typeof RequestRoute
+  ApiNotifyRoute: typeof ApiNotifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -103,6 +173,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partners': {
+      id: '/partners'
+      path: '/partners'
+      fullPath: '/partners'
+      preLoaderRoute: typeof PartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -126,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -133,16 +217,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forum/$postId': {
+      id: '/forum/$postId'
+      path: '/$postId'
+      fullPath: '/forum/$postId'
+      preLoaderRoute: typeof ForumPostIdRouteImport
+      parentRoute: typeof ForumRoute
+    }
+    '/api/notify': {
+      id: '/api/notify'
+      path: '/api/notify'
+      fullPath: '/api/notify'
+      preLoaderRoute: typeof ApiNotifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface ForumRouteChildren {
+  ForumPostIdRoute: typeof ForumPostIdRoute
+}
+
+const ForumRouteChildren: ForumRouteChildren = {
+  ForumPostIdRoute: ForumPostIdRoute,
+}
+
+const ForumRouteWithChildren = ForumRoute._addFileChildren(ForumRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
-  ForumRoute: ForumRoute,
+  ForumRoute: ForumRouteWithChildren,
   MapRoute: MapRoute,
+  PartnersRoute: PartnersRoute,
   ProfileRoute: ProfileRoute,
   RequestRoute: RequestRoute,
+  ApiNotifyRoute: ApiNotifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
